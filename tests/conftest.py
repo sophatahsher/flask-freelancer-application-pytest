@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from project import create_app, db
-from project.models import Book, User
+from src import create_app, db
+from src.models import Freelancer, Package
 
 
 # --------
@@ -12,14 +12,14 @@ from project.models import Book, User
 
 @pytest.fixture(scope='module')
 def new_user():
-    user = User('patkennedy79@gmail.com', 'FlaskIsAwesome')
-    return user
+    freelancer = Freelancer('Sophat Chhay', 'tovban.freelancer@gmail.com', 'SecretPass')
+    return freelancer
 
 
 @pytest.fixture(scope='module')
 def test_client():
     # Set the Testing configuration prior to creating the Flask application
-    os.environ['CONFIG_TYPE'] = 'config.TestingConfig'
+    os.environ['CONFIG_TYPE'] = 'config.config.TestingConfig'
     flask_app = create_app()
 
     # Create a test client using the Flask application configured for testing
@@ -35,8 +35,8 @@ def init_database(test_client):
     db.create_all()
 
     # Insert user data
-    default_user = User(email='patkennedy79@gmail.com', password_plaintext='FlaskIsAwesome')
-    second_user = User(email='patrick@yahoo.com', password_plaintext='FlaskIsTheBest987')
+    default_user = Freelancer('Sophat Chhay', email='tovban.freelancer@gmail.com', password_plaintext='SecretPass')
+    second_user = Freelancer('Sophat Chhay', email='tovban.freelancer+1@gmail.com', password_plaintext='SecretPass')
     db.session.add(default_user)
     db.session.add(second_user)
 
@@ -44,12 +44,12 @@ def init_database(test_client):
     db.session.commit()
 
     # Insert book data
-    book1 = Book('Malibu Rising', 'Taylor Jenkins Reid', '5', default_user.id)
-    book2 = Book('Carrie Soto is Back', 'Taylor Jenkins Reid', '4', default_user.id)
-    book3 = Book('Book Lovers', 'Emily Henry', '3', default_user.id)
-    db.session.add(book1)
-    db.session.add(book2)
-    db.session.add(book3)
+    package1 = Package('Malibu Rising', 'Taylor Jenkins Reid', '5', default_user.id)
+    package2 = Package('Carrie Soto is Back', 'Taylor Jenkins Reid', '4', default_user.id)
+    package3 = Package('Book Lovers', 'Emily Henry', '3', default_user.id)
+    db.session.add(package1)
+    db.session.add(package2)
+    db.session.add(package3)
 
     # Commit the changes for the books
     db.session.commit()
@@ -62,7 +62,7 @@ def init_database(test_client):
 @pytest.fixture(scope='function')
 def log_in_default_user(test_client):
     test_client.post('/login',
-                     data={'email': 'patkennedy79@gmail.com', 'password': 'FlaskIsAwesome'})
+                     data={'email': 'patkennedy79@gmail.com', 'password': 'SecretPass'})
 
     yield  # this is where the testing happens!
 
@@ -71,8 +71,8 @@ def log_in_default_user(test_client):
 
 @pytest.fixture(scope='function')
 def log_in_second_user(test_client):
-    test_client.post('login',
-                     data={'email': 'patrick@yahoo.com','password': 'FlaskIsTheBest987'})
+    test_client.post('/login',
+                     data={'email': 'tovban.freelancer@gmail.com','password': 'FlaskIsTheBest987'})
 
     yield   # this is where the testing happens!
 
@@ -83,7 +83,7 @@ def log_in_second_user(test_client):
 @pytest.fixture(scope='module')
 def cli_test_client():
     # Set the Testing configuration prior to creating the Flask application
-    os.environ['CONFIG_TYPE'] = 'config.TestingConfig'
+    os.environ['CONFIG_TYPE'] = 'config.config.TestingConfig'
     flask_app = create_app()
 
     runner = flask_app.test_cli_runner()

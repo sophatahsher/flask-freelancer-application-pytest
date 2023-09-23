@@ -25,11 +25,9 @@ def test_valid_login_logout(test_client, init_database):
     WHEN the '/login' page is posted to (POST)
     THEN check the response is valid
     """
-    response = test_client.post('/login',
-                                data=dict(email='patkennedy79@gmail.com', password='FlaskIsAwesome'),
-                                follow_redirects=True)
+    response = test_client.post('/login', data=dict(email='tovban.freelancer@gmail.com', password='SecretPass'), follow_redirects=True)
     assert response.status_code == 200
-    assert b'Thank you for logging in, patkennedy79@gmail.com!' in response.data
+    assert b'Thank you for logging in, tovban.freelancer@gmail.com!' in response.data
     assert b'Flask User Management' in response.data
     assert b'Logout' in response.data
     assert b'Login' not in response.data
@@ -56,7 +54,7 @@ def test_invalid_login(test_client, init_database):
     THEN check an error message is returned to the user
     """
     response = test_client.post('/login',
-                                data=dict(email='patkennedy79@gmail.com', password='FlaskIsNotAwesome'),
+                                data=dict(email='tovban.freelancer@gmail.com', password='SecretPass'),
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'ERROR! Incorrect login credentials.' in response.data
@@ -73,7 +71,7 @@ def test_login_already_logged_in(test_client, init_database, log_in_default_user
     THEN check an error message is returned to the user
     """
     response = test_client.post('/login',
-                                data=dict(email='patkennedy79@gmail.com', password='FlaskIsNotAwesome'),
+                                data=dict(email='tovban.freelancer@gmail.com', password='SecretPass'),
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Already logged in!  Redirecting to your User Profile page...' in response.data
@@ -90,12 +88,12 @@ def test_valid_registration(test_client, init_database):
     THEN check the response is valid and the user is logged in
     """
     response = test_client.post('/register',
-                                data=dict(email='patkennedy79@yahoo.com',
-                                          password='FlaskIsGreat',
-                                          confirm='FlaskIsGreat'),
+                                data=dict(email='tovban.freelancer@gmail.com',
+                                          password='SecretPass',
+                                          confirm='SecretPass'),
                                 follow_redirects=True)
     assert response.status_code == 200
-    assert b'Thank you for registering, patkennedy79@yahoo.com!' in response.data
+    assert b'Thank you for registering, tovban.freelancer@gmail.com!' in response.data
     assert b'Flask User Management' in response.data
     assert b'Logout' in response.data
     assert b'Login' not in response.data
@@ -122,12 +120,12 @@ def test_invalid_registration(test_client, init_database):
     THEN check an error message is returned to the user
     """
     response = test_client.post('/register',
-                                data=dict(email='patkennedy79@hotmail.com',
-                                          password='FlaskIsGreat',
-                                          confirm='FlskIsGreat'),   # Does NOT match!
+                                data=dict(email='tovban.freelancer@gmail.com',
+                                          password='SecretPass',
+                                          confirm='SecretPass'),   # Does NOT match!
                                 follow_redirects=True)
     assert response.status_code == 200
-    assert b'Thank you for registering, patkennedy79@hotmail.com!' not in response.data
+    assert b'Thank you for registering, tovban.freelancer@gmail.com!' not in response.data
     assert b'[This field is required.]' not in response.data
     assert b'Flask User Management' in response.data
     assert b'Logout' not in response.data
@@ -143,9 +141,9 @@ def test_duplicate_registration(test_client, init_database):
     """
     # Register the new account
     test_client.post('/register',
-                     data=dict(email='pkennedy@hey.com',
-                               password='FlaskIsTheBest',
-                               confirm='FlaskIsTheBest'),
+                     data=dict(email='tovban.freelancer@gmail.com',
+                               password='SecretPass',
+                               confirm='SecretPass'),
                      follow_redirects=True)
 
     # Since the registration process results in the user being logged in, log out the user
@@ -153,13 +151,13 @@ def test_duplicate_registration(test_client, init_database):
 
     # Try registering with the same email address
     response = test_client.post('/register',
-                                data=dict(email='pkennedy@hey.com',
-                                          password='FlaskIsStillTheBest',
-                                          confirm='FlaskIsStillTheBest'),
+                                data=dict(email='tovban.freelancer@gmail.com',
+                                          password='SecretPass',
+                                          confirm='SecretPass'),
                                 follow_redirects=True)
     assert response.status_code == 200
-    assert b'ERROR! Email (pkennedy@hey.com) already exists in the database.' in response.data
-    assert b'Thank you for registering, pkennedy@hey.com!' not in response.data
+    assert b'ERROR! Email (tovban.freelancer@gmail.com) already exists in the database.' in response.data
+    assert b'Thank you for registering, tovban.freelancer@gmail.com!' not in response.data
 
 
 def test_registration_when_logged_in(test_client, log_in_default_user):
@@ -169,13 +167,13 @@ def test_registration_when_logged_in(test_client, log_in_default_user):
     THEN check an error message is returned to the user
     """
     response = test_client.post('/register',
-                                data=dict(email='pkennedy@hey.com',
-                                          password='FlaskIsStillTheBest',
-                                          confirm='FlaskIsStillTheBest'),
+                                data=dict(email='tovban.freelancer@gmail.com',
+                                          password='SecretPass',
+                                          confirm='SecretPass'),
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Already logged in!  Redirecting to your User Profile page...' in response.data
-    assert b'Thank you for registering, pkennedy@hey.com!' not in response.data
+    assert b'Thank you for registering, tovban.freelancer@gmail.com!' not in response.data
 
 
 def test_status_page(test_client):

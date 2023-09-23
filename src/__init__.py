@@ -15,7 +15,7 @@ from flask_wtf import CSRFProtect
 db = SQLAlchemy()
 csrf_protection = CSRFProtect()
 login = LoginManager()
-login.login_view = "users.login"
+login.login_view = "freelancers.login"
 
 # -----------------------------------
 # Create Application Factory Function
@@ -59,21 +59,21 @@ def initialize_extensions(app):
     login.init_app(app)
 
     # Flask-Login configuration
-    from src.models import User
+    from src.models import Freelancer
 
     @login.user_loader
     def load_user(user_id):
-        return User.query.filter(User.id == int(user_id)).first()
+        return Freelancer.query.filter(Freelancer.id == int(user_id)).first()
 
 
 def register_blueprints(app):
     # Since the application instance is now created, register each Blueprint
     # with the Flask application instance (app)
-    from src.packages import books_blueprint
-    from src.freelancers import users_blueprint
+    from src.packages import packages_blueprint
+    from src.freelancers import freelancers_blueprint
 
-    app.register_blueprint(books_blueprint)
-    app.register_blueprint(users_blueprint)
+    app.register_blueprint(packages_blueprint)
+    app.register_blueprint(freelancers_blueprint)
 
 
 def configure_logging(app):

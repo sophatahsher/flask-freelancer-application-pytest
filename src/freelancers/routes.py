@@ -6,19 +6,19 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from src import db
-from src.models import User
+from src.models import Freelancer
 
-from . import users_blueprint
+from . import freelancers_blueprint
 from .forms import LoginForm, RegisterForm
 
 
-@users_blueprint.route('/profile')
+@freelancers_blueprint.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('profile.html')
+    return render_template('freelancers/profile.html')
 
 
-@users_blueprint.route('/register', methods=['GET', 'POST'])
+@freelancers_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     # If the User is already logged in, don't allow them to try to register
     if current_user.is_authenticated:
@@ -28,7 +28,7 @@ def register():
     form = RegisterForm()
     if request.method == 'POST' and form.validate_on_submit():
         try:
-            new_user = User(form.email.data, form.password.data)
+            new_user = Freelancer('Freelancer Name', form.email.data, form.password.data)
             db.session.add(new_user)
             db.session.commit()
 
@@ -41,7 +41,7 @@ def register():
     return render_template('register.html', form=form)
 
 
-@users_blueprint.route('/login', methods=['GET', 'POST'])
+@freelancers_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     # If the User is already logged in, don't allow them to try to log in again
     if current_user.is_authenticated:
@@ -52,7 +52,10 @@ def login():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            user = User.query.filter_by(email=form.email.data).first()
+            print(form.email.data)
+            print(form.password.data)
+            user = Freelancer.query.filter_by(email=form.email.data).first()
+            print(user)
             if user and user.is_password_correct(form.password.data):
                 db.session.add(user)
                 db.session.commit()
@@ -64,7 +67,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@users_blueprint.route('/logout')
+@freelancers_blueprint.route('/logout')
 @login_required
 def logout():
     logout_user()
@@ -72,7 +75,7 @@ def logout():
     return redirect(url_for('packages.index'))
 
 
-@users_blueprint.route('/status')
+@freelancers_blueprint.route('/status')
 def status():
     # Check if the database needs to be initialized
     engine = sqla.create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
@@ -82,7 +85,7 @@ def status():
     database_created = users_table_created and books_table_created
 
     return render_template(
-        'users/status.html',
+        'freelancers/status.html',
         config_type=os.getenv('CONFIG_TYPE'),
         database_status=database_created,
         database_users_table_status=users_table_created,
