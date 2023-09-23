@@ -55,7 +55,7 @@ def initialize_extensions(app):
     # Since the application instance is now created, pass it to each Flask
     # extension instance to bind it to the Flask application instance (app)
     db.init_app(app)
-    csrf_protection.init_app(app)
+    #csrf_protection.init_app(app)
     login.init_app(app)
 
     # Flask-Login configuration
